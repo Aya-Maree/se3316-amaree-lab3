@@ -1,10 +1,10 @@
 // db.js
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/superheroes', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost/superheroes')
     .then(() => console.log('Connected to MongoDB...'))
     .catch(err => console.error('Could not connect to MongoDB...', err));
-
+    
 const SuperHeroSchema = new mongoose.Schema({
     id: Number,
     name: String,
@@ -16,7 +16,11 @@ const SuperHeroSchema = new mongoose.Schema({
     publisher: String,
     skinColor: String,
     alignment: String,
-    weight: Number
+    weight: Number,
+    powers: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SuperheroPowers'
+    }
 });
 
 const SuperheroPowersSchema = new mongoose.Schema({

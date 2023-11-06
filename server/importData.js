@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 const { SuperHero, SuperheroPowers } = require('./db.js'); // Adjust the path to where your db.js file is located
-const superheroPowersData = require('./data/superhero_powers.json'); // Adjust the path to your JSON file
-const superheroInfoData = require('./data/superhero_info.json'); // Adjust the path to your JSON file
+const superheroPowersData = require('./server/data/superhero_powers.json'); // Adjust the path to your JSON file
+const superheroInfoData = require('./server/data/superhero_info.json'); // Adjust the path to your JSON file
 
 // A function to convert string values of "True" and "False" to actual Boolean values
 const toBoolean = (value) => value === "True";
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/superheroes', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB...'))
-.catch(err => console.error('Could not connect to MongoDB...', err));
+//mongoose.connect('mongodb://localhost/superheroes', {     
+//  useNewUrlParser: true,
+ // useUnifiedTopology: true
+//})
+//.then(() => console.log('Connected to MongoDB...'))
+//.catch(err => console.error('Could not connect to MongoDB...', err));
 
 // A function to insert superhero info data
 const insertSuperheroInfo = async () => {

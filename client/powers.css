@@ -1,0 +1,59 @@
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Styles for the results container */
+#searchResults {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Styles for each hero card */
+.hero-card {
+    background-color: #476c5498;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.hero-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Styles for hero names */
+.hero-card h2 {
+    color: #ebe9e9;
+    margin-top: 0;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* Styles for the powers list */
+.hero-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.hero-card ul li {
+    background-color: #20311e85;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: rgb(213, 207, 207);
+}
+
+/* When no results are found */
+#searchResults p {
+    text-align: center;
+    color: #999999;
+}

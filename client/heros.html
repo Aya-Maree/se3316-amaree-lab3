@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<head>
+    <title>SuperHero Site</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Aya Maree">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="heros.css">
+</head>
+<header>
+    <nav>
+        <ul>
+            <li id="title">SuperHero Homepage</li>
+            <li>
+                <a href="/client/index.html">Home</a>
+            </li>
+            <li>
+                <a href="/client/heros.html">Search Heros</a>
+            </li>
+            <li>
+                <a href="/client/lists.html">Hero Lists</a>
+            </li>
+            <li>
+                <a href="/client/powers.html">Hero Powers</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+    <div id="searchBox">
+
+        <label for="superheros">Search SuperHeros By:</label>
+        <select name="searchOptions" id="searchOptions">
+            <option value="name">Name</option>
+            <option value="race">Race</option>
+            <option value="publisher">Publisher</option>
+            <option value="id">id</option>
+            <option value="power">Power</option>
+        </select>
+
+        <label id="search">Search By:</label>
+        <textarea name="searchInput" placeholder="......."></textarea>
+
+        <label for="sorting">Sort By:</label>
+        <select name="sortBy" id="sortBy">
+            <option value="default">Default</option>
+            <option value="name">Name</option>
+            <option value="race">Race</option>
+            <option value="publisher">Publisher</option>
+            <option value="power">Power</option>
+        </select>
+
+        <button id="searchButton">Search</button>
+
+    </div>
+    <div id="searchResults" class="results-container">
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+    <script src="heros.js"></script>
+</body>

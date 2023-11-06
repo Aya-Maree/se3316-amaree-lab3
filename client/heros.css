@@ -1,0 +1,83 @@
+#searchBox select,
+#searchBox textarea, button {
+    width: 200px; /* Adjust width as needed */
+    height: 25px; /* Adjust height as needed */
+    font-family: 'Times New Roman', Times, serif;
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #ccc; /* Standard border */
+    box-sizing: border-box;
+    outline: none; /* Removes the default focus outline */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Example shadow - adjust as desired */
+    border-radius: 4px; /* Rounded corners, if desired */
+    background-color: #627354; /* Background color */
+    color: #333; /* Text color */
+}
+button:hover {
+    background-color: #374937; /* Change to your desired hover color */
+    color: white; /* Optional: Change text color on hover if desired */
+    cursor: pointer; /* Changes the mouse cursor to indicate it's clickable */
+}
+
+#searchBox textarea {
+    resize: none; /* This will prevent resizing of the textarea */
+}
+
+#searchBox {
+    margin-top: 20px;
+    color:aliceblue;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* This will vertically align the child elements */
+    gap: 10px; /* This adds some space between the elements */
+    background-color: rgba(53, 91, 78, 0.57);
+    padding-top: 50px;
+    padding-bottom: 50px;
+    outline: 2px solid #000000;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
+    font-weight: bold;
+}
+#searchResults {
+    padding: 50px;
+    padding-bottom: 500px;
+    background-color: rgba(23, 39, 34, 0.818);
+    margin-top: 20px; /* Adjust the value to the space you want */
+    outline: 2px solid #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.534);
+    transition: 0.3s;
+    width: 40%;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #5c6b51b5;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.card-body {
+    padding: 2px 16px;
+}
+
+.card-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.card-text {
+    margin-bottom: 10px;
+}
+
+/* Responsive grid */
+@media (max-width: 600px) {
+    .card {
+        width: 90%;
+    }
+}
