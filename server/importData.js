@@ -6,6 +6,7 @@ const superheroInfoData = require('./server/data/superhero_info.json'); // Adjus
 // A function to convert string values of "True" and "False" to actual Boolean values
 const toBoolean = (value) => value === "True";
 
+
 // Connect to MongoDB
 //mongoose.connect('mongodb://localhost/superheroes', {     
 //  useNewUrlParser: true,
