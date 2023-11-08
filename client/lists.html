@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Aya Maree">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="heros.css">
+    <link rel="stylesheet" href="lists.css">
 </head>
 <header>
     <nav>
@@ -29,6 +31,24 @@
 
 <body>
 
+    <div id="searchBox">
+
+        <label for="superheros">List Name:</label>
+        <textarea id="listName" placeholder="Enter List Name"></textarea>
+        <button id="createBtn">Create</button>
+        <button id="deleteBtn">Delete</button>
+
+
+        <label for="superHero">Super Hero:</label>
+        <textarea id="superID" placeholder="Enter SuperHero ID..."></textarea>
+        <button id="addHero">Add Hero</button>
+        <button id="deleteHero">Delete Hero</button>
+
+    </div>
+    <div id="searchResults" class="results-container">
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+    <script src="lists.js"></script>
 </body>
 
 </html>

@@ -193,11 +193,185 @@ const SuperheroPowersSchema = new mongoose.Schema({
     Omnipresent: Boolean,
     Omniscient: Boolean
 });
+const SuperHeroListSchema = new mongoose.Schema({
+    name: { type: String, unique: true, required: true },
+    superheroes: [{
+        type: Number,
+        ref: 'Superhero'
+    }]
+});
+
+
 
 const SuperHero = mongoose.model('Superhero', SuperHeroSchema);
 const SuperheroPowers = mongoose.model('SuperheroPowers', SuperheroPowersSchema);
+const SuperHeroList = mongoose.model('SuperHeroList', SuperHeroListSchema);
+
+// Function to create a new SuperHero list
+async function createSuperHeroList(listName) {
+    try {
+        // Check if a list with the given name already exists
+        const listExists = await SuperHeroList.findOne({ name: listName });
+        if (listExists) {
+            return { error: `A list with the name '${listName}' already exists.` };
+        }
+
+        // If it doesn't exist, create a new list
+        const newList = new SuperHeroList({ name: listName });
+        await newList.save();
+        console.log(`List '${listName}' created successfully.`);
+        return { data: newList };
+    } catch (err) {
+        console.error('Error creating superhero list:', err.message);
+        return { error: err.message }; // Returning error message
+    }
+}
+
+// Function to add a superhero to a list by ID
+async function addSuperHeroToList(heroId, listName) {
+    try {
+        // Find the superhero by ID
+        let hero = await SuperHero.findOne({ id: parseInt(heroId, 10) });
+        if (!hero) {
+            console.log(`Superhero with ID '${heroId}' does not exist.`);
+            return null; // If hero does not exist, return null
+        }
+
+        // Find the list by name
+        let list = await SuperHeroList.findOne({ name: listName });
+        if (!list) {
+            // If the list does not exist, create a new one
+            list = new SuperHeroList({ name: listName, superheroes: [] });
+        }
+
+       // Check if the superhero is already in the list
+        if (list.superheroes.includes(heroId)) {
+            console.log(`Superhero '${hero.name}' is already in the '${listName}' list.`);
+            return list; // If hero is already in the list, return the list
+        }
+
+        // Add superhero ID to the list
+        list.superheroes.push(heroId);
+        await list.save();
+        console.log(`Superhero '${hero.name}' added to '${listName}' list successfully.`);
+        return list;
+    } catch (err) {
+        console.error('Error adding superhero to list:', err.message);
+        throw err; // Re-throw the error to be handled by the caller
+    }
+}
+
+async function removeSuperHeroFromList(heroId, listName) {
+    // Convert heroId to Number if it's a String
+    heroId = parseInt(heroId, 10);
+
+    // Find the list by name
+    let list = await SuperHeroList.findOne({ name: listName });
+
+    if (list) {
+        // Filter out the superhero from the list
+        list.superheroes = list.superheroes.filter(id => id !== heroId);
+        await list.save();
+        console.log(`Superhero with ID ${heroId} removed from list '${listName}' successfully.`);
+    } else {
+        console.log(`List '${listName}' not found.`);
+        throw new Error(`List '${listName}' not found.`);
+    }
+}
+
+
+
+
+
+// Assuming SuperHeroList is already defined in your Mongoose models
+
+// Function to save or update a list of superhero IDs
+async function saveOrUpdateSuperHeroList(listName, superheroIds) {
+    // Find the list by name
+    const heroList = await SuperHeroList.findOne({ name: listName });
+
+    // If the list does not exist, throw an error
+    if (!heroList) {
+        throw new Error(`List with the name '${listName}' does not exist.`);
+    }
+
+    // Replace existing superhero IDs with new values
+    heroList.superheroes = superheroIds;
+
+    // Save the updated list
+    await heroList.save();
+    console.log(`List '${listName}' updated successfully with new superheroes.`);
+    return heroList;
+}
+
+
+// Function to delete a superhero list by name
+async function deleteSuperHeroListByName(listName) {
+    try {
+        const list = await SuperHeroList.findOne({ name: listName });
+        
+        if (!list) {
+            throw new Error(`No list found with the name '${listName}'.`);
+        }
+
+        await list.remove();
+        console.log(`List '${listName}' deleted successfully.`);
+        return { message: `List '${listName}' deleted successfully.` };
+    } catch (error) {
+        console.error('Error deleting superhero list:', error.message);
+        throw error; // Re-throw the error to be handled by the caller
+    }
+}
+
+
+async function getSuperHeroesFromList(listName) {
+    try {
+        // Find the list and populate the superhero details along with powers
+        const listWithHeroes = await SuperHeroList.findOne({ name: listName })
+            .populate({
+                path: 'superheroes',
+                model: 'Superhero',
+                // populate the 'powers' field in the Superhero model
+                populate: {
+                    path: 'powers',
+                    model: 'SuperheroPowers'
+                }
+            });
+
+        if (!listWithHeroes) {
+            throw new Error(`No list found with the name '${listName}'.`);
+        }
+
+        // Map the data to extract relevant information
+        const heroDetails = listWithHeroes.superheroes.map(hero => {
+            return {
+                name: hero.name,
+                gender: hero.gender,
+                eyeColor: hero.eyeColor,
+                race: hero.race,
+                hairColor: hero.hairColor,
+                height: hero.height,
+                publisher: hero.publisher,
+                skinColor: hero.skinColor,
+                alignment: hero.alignment,
+                weight: hero.weight,
+                powers: hero.powers // Assuming powers is an object with Boolean properties
+            };
+        });
+        console.log(`Superheroes from list '${listName}':`, heroDetails);
+        return heroDetails;
+
+    } catch (error) {
+        console.error('Error getting superhero list:', error.message);
+        throw error; // Re-throw the error to be handled by the caller
+    }
+}
 
 module.exports = {
+    removeSuperHeroFromList,
+    addSuperHeroToList,
+    createSuperHeroList,
     SuperHero,
-    SuperheroPowers
+    SuperheroPowers,
+    SuperHeroList
 };

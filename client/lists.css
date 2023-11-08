@@ -1,0 +1,19 @@
+#searchBox {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Adjust the space between the items */
+}
+
+#searchBox label,
+#searchBox textarea,
+#searchBox button {
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#searchBox textarea {
+    margin: 8px 0; /* Add some margin for spacing */
+}
+
+#searchBox button {
+    margin-top: 8px; /* Add some margin above the buttons */
+}

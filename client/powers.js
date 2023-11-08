@@ -1,11 +1,14 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('searchButton');
     const searchBox = document.querySelector('[name="superID"]');
+    const publishersButton = document.getElementById('getPublishers');
 
+    publishersButton.addEventListener('click', function() {
+
+        fetchPublishers();
+    });
     searchButton.addEventListener('click', function() {
-        console.log("HI")
+    
         const superId = searchBox.value.trim(); // Get the ID from the textarea
         if (superId) {
             fetchSuperHero(superId);
@@ -14,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
 
 function fetchSuperHero(id) {
     // Replace `/api/superhero` with your actual server endpoint
@@ -62,4 +66,46 @@ function displayResults(heroData) {
     heroCard.appendChild(heroName);
     heroCard.appendChild(powersList);
     resultsContainer.appendChild(heroCard);
+}
+function fetchPublishers() {
+    fetch('http://localhost:3000/api/publishers')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Publishers Data:", data); // Log the publisher data
+            displayPublishers(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function displayPublishers(publishersData) {
+    const resultsContainer = document.getElementById('searchResults');
+    resultsContainer.innerHTML = ''; // Clear previous results
+
+    // Create a publishers card similar to hero card for styling
+    const publishersCard = document.createElement('div');
+    publishersCard.className = 'hero-card'; // Use the same class as for the superhero
+
+    // Add a title for the publishers list if you want
+    const publishersTitle = document.createElement('h2');
+    publishersTitle.textContent = 'Publishers';
+    publishersCard.appendChild(publishersTitle);
+
+    const publishersList = document.createElement('ul');
+
+    publishersData.forEach(publisher => {
+        const publisherItem = document.createElement('li');
+        publisherItem.textContent = publisher;
+        // Here, you might want to apply specific styles to each publisher list item if needed
+        publishersList.appendChild(publisherItem);
+    });
+
+    publishersCard.appendChild(publishersList);
+    resultsContainer.appendChild(publishersCard);
 }
