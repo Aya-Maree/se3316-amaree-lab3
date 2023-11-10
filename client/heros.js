@@ -1,9 +1,11 @@
 // heros.js or the name of your client-side JavaScript file
 
 // Function to create a card for a superhero
-function createSuperheroCard(superhero) {
+// Modify this function to accept the imageUrl as a parameter
+function createSuperheroCard(superhero, imageUrl) {
     return `
         <div class="card">
+            <img src="${imageUrl}" alt="Image of ${superhero.name}" class="card-img-top">
             <div class="card-body">
                 <h5 class="card-title">${superhero.name}</h5>
                 <p class="card-text">Gender: ${superhero.gender}</p>
@@ -17,14 +19,17 @@ function createSuperheroCard(superhero) {
     `;
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     // Access the DOM elements after the DOM has been fully loaded
     const searchButton = document.getElementById('searchButton');
     const searchInput = document.querySelector('textarea[name="searchInput"]');
     const sortBySelect = document.getElementById('sortBy');
     const searchBySelect = document.getElementById('searchOptions');
-    
-    let searchByVal = ''; // Initialize variable to hold the current searchBy value
+    console.log(document.querySelector('textarea[name="n"]'))
+    const n = document.querySelector('textarea[name="n"]');
+    console.log(n); // This should log the textarea element to the console
+    let searchByVal = searchBySelect.options[searchBySelect.selectedIndex].value;
     let sortByVal = ''; // Initialize variable to hold the current sortBy value
 
     searchBySelect.addEventListener('change', function() {
@@ -39,18 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchButton.addEventListener('click', function() {
         const searchTerm = searchInput.value; // Get the current value of the search input
+        const nValue = n.value; // Get the current value of the 'n' input
         let url = new URL('http://localhost:3000/api/superheroes/search');
         
         // Use URLSearchParams to construct the query string
         let params = new URLSearchParams({
             searchTerm: searchTerm,
             searchBy: searchByVal,
-            sortBy: sortByVal
+            sortBy: sortByVal,
+            n: nValue // Add the 'n' parameter
         });
-
+    
+    
         // Append the query string to the URL
         url.search = params.toString();
-
+    
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -59,11 +67,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
+                // Get all image URLs in parallel
+                const imageFetchPromises = data.map(superhero => {
+                    return fetch(`http://localhost:3000/api/superhero-image-by-name/${encodeURIComponent(superhero.name)}`)
+                        .then(response => response.json())
+                        .then(imageData => {
+                            return { ...superhero, imageUrl: imageData.imageUrl }; // Combine the superhero data with its image URL
+                        });
+                });
+    
+                // Wait for all image URLs to be fetched
+                return Promise.all(imageFetchPromises);
+            })
+            .then(superheroesWithImages => {
                 const resultsContainer = document.getElementById('searchResults');
                 resultsContainer.innerHTML = ''; // Clear previous results
-                // Loop through the superheroes and create cards
-                data.forEach(superhero => {
-                    resultsContainer.innerHTML += createSuperheroCard(superhero);
+    
+                // Now we have all the superhero data with image URLs
+                superheroesWithImages.forEach(superhero => {
+                    resultsContainer.innerHTML += createSuperheroCard(superhero, superhero.imageUrl);
                 });
             })
             .catch(error => {
@@ -71,4 +93,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultsContainer.textContent = 'An error occurred: ' + error.message;
             });
     });
+    
 });

@@ -2,12 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { createSuperHeroList, SuperHeroList, addSuperHeroToList, removeSuperHeroFromList } = require('./db.js');
-
-
-
-const db = require('./db'); // Make sure this points to your database connection file
+const fetch = require('node-fetch'); 
+const db = require('./db'); 
 const path = require('path');
-
 const app = express();
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(bodyParser.json());
@@ -18,8 +15,6 @@ app.use(cors());
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-
-// Function to build the query based on the search term and search by field
 // Function to build the query based on the search term and search by field
 function buildQuery(searchTerm, searchBy) {
   let query = {};
@@ -33,7 +28,6 @@ function buildQuery(searchTerm, searchBy) {
     // If conversion to number fails and there's still a searchTerm and searchBy, proceed to regex
   } 
   if (searchTerm && searchBy && searchBy !== 'id') {
-    // Escape the search term to avoid issues with special characters
     const escapedSearchTerm = escapeRegExp(searchTerm);
     const searchTermRegex = new RegExp('^' + escapedSearchTerm, 'i');
     
@@ -46,7 +40,6 @@ function buildQuery(searchTerm, searchBy) {
 // REST API endpoint to get all unique publisher names
 app.get('/api/publishers', async (req, res) => {
   try {
-    // Use the distinct function to get all unique publishers
     const publishers = await db.SuperHero.distinct('publisher');
     res.json(publishers);
   } catch (err) {
@@ -55,6 +48,30 @@ app.get('/api/publishers', async (req, res) => {
   }
 });
 
+// This route will act as a proxy to get around the CORS issue and search by name
+app.get('/api/superhero-image-by-name/:superheroName', async (req, res) => {
+  const { superheroName } = req.params;
+  const accessToken = '2088884981475988'; //access token
+  try {
+    const searchUrl = `https://superheroapi.com/api/${accessToken}/search/${encodeURIComponent(superheroName)}`;
+    const searchResponse = await fetch(searchUrl);
+    if (!searchResponse.ok) {
+      throw new Error('Failed to search superhero');
+    }
+    const searchData = await searchResponse.json();
+    if (searchData.response === 'success' && searchData.results.length > 0) {
+      const imageUrl = searchData.results[0].image.url;
+      res.json({ imageUrl });
+    } else {
+      res.json({ imageUrl: 'imagenotfound.jpeg' }); // Send a default image
+    }
+  } catch (error) {
+    if (!res.headersSent) {
+      console.error('Error fetching superhero image by name:', error);
+      res.status(500).send('Internal server error');
+    }
+  }
+});
 
 // REST API endpoint to get superhero powers by ID
 app.get('/api/superhero/:id', async (req, res) => {
@@ -62,12 +79,9 @@ app.get('/api/superhero/:id', async (req, res) => {
   let superheroId = parseInt(id);
 
   if (isNaN(superheroId)) {
-    // Make sure to return here so no further code is executed in this request.
     return res.status(400).send('Invalid Superhero ID');
   }
-
   console.log(`Fetching superhero with ID: ${superheroId}`);
-
   try {
     let superhero = await db.SuperHero.findOne({ id: superheroId })
       .populate('powers')
@@ -76,7 +90,7 @@ app.get('/api/superhero/:id', async (req, res) => {
 
     // Check if superhero exists before sending a response
     if (!superhero) {
-      // Make sure to return here as well.
+     
       return res.status(404).send('Superhero not found');
     }
 
@@ -98,16 +112,18 @@ app.get('/api/superhero/:id', async (req, res) => {
 });
 
 
-
-
 // REST API endpoint to search for superheroes
 app.get('/api/superheroes/search', async (req, res) => {
-  const { searchTerm, searchBy, sortBy } = req.query;
-  console.log(`Searching for: ${searchTerm}, by ${searchBy}, sorted by ${sortBy}`);
+  // Destructure the searchTerm, searchBy, sortBy, and n from req.query
+  const { searchTerm, searchBy, sortBy, n } = req.query;
+  console.log(`Searching for: ${searchTerm}, by ${searchBy}, sorted by ${sortBy}, limit: ${n}`);
 
   if (!searchTerm || !searchBy) {
     return res.status(400).send('Search term and field are required');
   }
+
+  // Convert n to an integer. Default to 0, which means no limit in MongoDB.
+  const limit = parseInt(n, 10) || 0;
 
   const query = buildQuery(searchTerm, searchBy);
   let sort = {};
@@ -116,7 +132,13 @@ app.get('/api/superheroes/search', async (req, res) => {
   }
 
   try {
-    let superheroes = await db.SuperHero.find(query).collation({ locale: 'en', strength: 2 }).sort(sort).exec();
+    // Apply the limit if it's greater than 0
+    let queryBuilder = db.SuperHero.find(query).collation({ locale: 'en', strength: 2 }).sort(sort);
+    if (limit > 0) {
+      queryBuilder = queryBuilder.limit(limit);
+    }
+    let superheroes = await queryBuilder.exec();
+
     if (superheroes.length > 0) {
       res.json(superheroes);
     } else {
@@ -127,6 +149,7 @@ app.get('/api/superheroes/search', async (req, res) => {
     res.status(500).send('Error fetching superheroes');
   }
 });
+
 
 // Endpoint to create a new list
 app.post('/api/lists', async (req, res) => {
@@ -206,9 +229,21 @@ app.post('/api/lists/:name/heroes', async (req, res) => {
   }
 });
 
-// ... any other routes or middleware ...
+app.get('/api/lists/:name', async (req, res) => {
+  const listName = req.params.name;
+  try {
+    const list = await SuperHeroList.findOne({ name: listName });
+    await list.populateSuperheroes();
 
-// Listen on port
+    if (!list) {
+      return res.status(404).send('List not found');
+    }
+    res.json(list);
+  } catch (error) {
+    console.error('Server error:', error); // This will log the error to the console
+    res.status(500).send(`An error occurred on the server: ${error.message}`);
+  }
+});
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is up and running, listening on port ${port}`);

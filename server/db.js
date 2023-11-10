@@ -196,10 +196,20 @@ const SuperheroPowersSchema = new mongoose.Schema({
 const SuperHeroListSchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
     superheroes: [{
-        type: Number,
+        type: Number, // This assumes that the `id` field in Superhero schema is a Number
         ref: 'Superhero'
     }]
 });
+
+  
+  SuperHeroListSchema.methods.populateSuperheroes = async function() {
+    this.superheroes = await Promise.all(
+        this.superheroes.map(async (heroId) => {
+            return SuperHero.findOne({ id: heroId });
+        })
+    );
+};
+
 
 
 
@@ -322,6 +332,7 @@ async function deleteSuperHeroListByName(listName) {
         throw error; // Re-throw the error to be handled by the caller
     }
 }
+
 
 
 async function getSuperHeroesFromList(listName) {

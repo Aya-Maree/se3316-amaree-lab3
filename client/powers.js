@@ -20,11 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function fetchSuperHero(id) {
-    // Replace `/api/superhero` with your actual server endpoint
     fetch(`http://localhost:3000/api/superhero/${id}`)
         .then(response => response.json())
         .then(data => {
-            console.log("Response Data:", data); // Log the response data
+            console.log("Response Data:", data); 
             if (data) {
                 displayResults(data);
             } else {

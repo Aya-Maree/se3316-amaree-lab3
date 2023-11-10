@@ -5,14 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Aya Maree">
-    <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="heros.css">
-    <link rel="stylesheet" href="lists.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <header>
     <nav>
         <ul>
-            <li id="title">SuperHero Homepage</li>
+            <li id="title">SuperHero Site</li>
             <li>
                 <a href="/client/index.html">Home</a>
             </li>
@@ -44,10 +43,16 @@
         <button id="addHero">Add Hero</button>
         <button id="deleteHero">Delete Hero</button>
 
+        <div class="radio-button-container">
+            <input type="radio" id="option1" name="group1" value="option1" onclick="toggleRadio(this);"
+                data-was-checked="false">
+            <label for="option1">Show List</label><br>
+        </div>
     </div>
     <div id="searchResults" class="results-container">
         <!-- Cards will be dynamically inserted here -->
     </div>
+
     <script src="lists.js"></script>
 </body>
 

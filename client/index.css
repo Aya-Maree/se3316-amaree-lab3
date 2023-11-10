@@ -28,3 +28,18 @@ body {
     background-attachment: fixed; /* Keep the background fixed during scroll */
     background-position: center center; /* Center the background image */
 }
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #2a4e308a;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: #1b3c2092;
+}

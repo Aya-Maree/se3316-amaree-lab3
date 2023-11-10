@@ -1,19 +1,35 @@
 #searchBox {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Adjust the space between the items */
+    gap: 8px;  
 }
 
 #searchBox label,
 #searchBox textarea,
 #searchBox button {
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    box-sizing: border-box;  
 }
 
 #searchBox textarea {
-    margin: 8px 0; /* Add some margin for spacing */
+    margin: 8px 0; 
 }
 
 #searchBox button {
-    margin-top: 8px; /* Add some margin above the buttons */
+    margin-top: 8px;  
+}
+
+.radio-button-container {
+    padding-left: 10px;  
+    padding-top: 10px; 
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.534);
+    transition: 0.3s;
+    width:20%;
+    flex: 0 1 calc(20% - 20px); /* 100% divided by 5 cards minus the gap */
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #5c6b51b5;
 }

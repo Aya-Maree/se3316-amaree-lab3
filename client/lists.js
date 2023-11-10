@@ -139,32 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('There was a problem removing the hero from the list:', error);
         });
     }
-    
-    /*async function addHeroToList(heroId, listName) {
-        try {
-            const response = await fetch(`http://localhost:3000/api/lists/${listName}/heroes`, { // Adjusted endpoint
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ heroId }), // Assuming the backend expects an object with a heroId property
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
-            const data = await response.json();
-            console.log(data.message); // Log the success message from the server
-        } catch (error) {
-            console.error('There was an error adding the hero to the list:', error);
-            throw error; // Rethrow the error so it can be caught by the calling function
-        }
-    }*/
-    
-    
-    
-    // This function simulates checking the database for the hero ID
+
     // This function checks the database for the hero ID
     async function checkHeroInDatabase(heroId) {
         try {
@@ -185,16 +160,87 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error checking hero in database:', error);
         return false;
         }
-    }
+    }       
 
     
-    
-  
-      
-    
-
-// Your event listener here remains the same
-
-
-    // Add other button event listeners similarly...
 });
+async function fetchAndDisplayList(listName) {
+    try {
+      // Fetch the superhero list from the server
+      const response = await fetch(`http://127.0.0.1:3000/api/lists/${listName}`);
+      if (!response.ok) {
+        throw new Error('List not found');
+      }
+      const list = await response.json();
+  
+      const resultBox = document.getElementById('searchResults');
+      resultBox.innerHTML = ''; // Clear previous results
+  
+      // Fetch and display each superhero with their image
+      for (const hero of list.superheroes) {
+        const imageUrl = await fetchSuperheroImageByName(hero.name);
+        const heroCardHTML = createSuperheroCard(hero, imageUrl);
+        resultBox.insertAdjacentHTML('beforeend', heroCardHTML);
+      }
+  
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+  
+  async function fetchSuperheroImageByName(superheroName) {
+    try {
+      // This URL should point to your Express server's new route
+      const imageUrlResponse = await fetch(`http://localhost:3000/api/superhero-image-by-name/${encodeURIComponent(superheroName)}`);
+      if (!imageUrlResponse.ok) {
+        throw new Error('Failed to fetch image from proxy');
+      }
+      const imageJson = await imageUrlResponse.json();
+      return imageJson.imageUrl;
+    } catch (error) {
+      console.error('Failed to fetch image:', error);
+      return ''; // Return an empty string or a placeholder image URL if the fetch fails
+    }
+  }
+  
+  
+  
+  function createSuperheroCard(superhero, imageUrl) {
+    return `
+      <div class="card">
+        <img src="${imageUrl}" alt="${superhero.name}" class="card-img-top">
+        <div class="card-body">
+          <h5 class="card-title">${superhero.name}</h5>
+          <p class="card-text">Gender: ${superhero.gender}</p>
+          <p class="card-text">Eye Color: ${superhero.eyeColor}</p>
+          <p class="card-text">Race: ${superhero.race}</p>
+          <p class="card-text">Hair Color: ${superhero.hairColor}</p>
+          <p class="card-text">Height: ${superhero.height} cm</p>
+          <p class="card-text">Publisher: ${superhero.publisher}</p>
+        </div>
+      </div>
+    `;
+  }
+  
+  
+function toggleRadio(radio) {
+    // Get the current state of the clicked radio button
+    let wasChecked = radio.dataset.wasChecked;
+
+    // Get all radio buttons
+    let radios = document.getElementsByName(radio.name);
+
+    // Unset the 'wasChecked' attribute for all radios
+    radios.forEach((r) => r.dataset.wasChecked = "false");
+
+    // If the button was already checked, clear the selection
+    if (wasChecked === "true") {
+        radio.checked = false;
+        radio.dataset.wasChecked = "false";
+         // Call the function to fetch and display the list
+         fetchAndDisplayList(listName.value);
+    } else {
+        radio.checked = true;
+        radio.dataset.wasChecked = "true";
+    }
+}
