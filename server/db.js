@@ -1,10 +1,16 @@
 // db.js
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/superheroes')
-    .then(() => console.log('Connected to MongoDB...'))
-    .catch(err => console.error('Could not connect to MongoDB...', err));
-    
+const uri = 'mongodb+srv://heros.eg3jx8g.mongodb.net/Heros?authSource=%24external&authMechanism=MONGODB-X509';
+const options = {
+  tls: true,
+  tlsCertificateKeyFile: '/Users/ayamaree/Downloads/X509-cert-3474042284503535559.pem'
+};
+
+mongoose.connect(uri, options)
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
 const SuperHeroSchema = new mongoose.Schema({
     id: Number,
     name: String,

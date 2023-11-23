@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const addHeroBtn = document.getElementById('addHero');
     const deleteHeroBtn = document.getElementById('deleteHero');
 
+    function getBaseUrl() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        } else {
+            return 'http://50.17.44.156:3000';
+        }
+    }
+    
+
     createBtn.addEventListener('click', function() {
         // Validate list name
         if (listName.value.trim() === '') {
@@ -14,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         // Make an AJAX call to your server to create a new list
-        fetch('http://localhost:3000/api/lists', { // Using 'localhost' here
+        fetch(`${getBaseUrl()}/api/lists`, { // Using 'localhost' here
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -42,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Assuming your server's DELETE endpoint expects just the name in the URL
     deleteBtn.addEventListener('click', function() {
         // Make an AJAX call to your server to delete the list
-        fetch(`http://localhost:3000/api/lists/${listName.value}`, {
+        fetch(`${getBaseUrl()}/api/lists/${listName.value}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -79,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // If everything is okay, proceed to add the hero to the list by making a POST request to the server
         try {
-            const response = await fetch(`http://localhost:3000/api/lists/${listName.value.trim()}/heroes`, {
+            const response = await fetch(`${getBaseUrl()}/api/lists/${listName.value.trim()}/heroes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     function deleteHeroFromList(heroId, listName) {
-        fetch(`http://localhost:3000/api/lists/${listName}/heroes/${heroId}`, {
+        fetch(`${getBaseUrl()}/api/lists/${listName}/heroes/${heroId}`, {
             method: 'DELETE',
         })
         .then(response => {
@@ -143,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // This function checks the database for the hero ID
     async function checkHeroInDatabase(heroId) {
         try {
-        const response = await fetch(`http://localhost:3000/api/superhero/${heroId}`);
+        const response = await fetch(`${getBaseUrl()}/api/superhero/${heroId}`);
     
         if (!response.ok) {
             if (response.status === 404) {
@@ -164,10 +173,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
 });
+function getBaseUrl() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000';
+    } else {
+        return 'http://50.17.44.156:3000';
+    }
+}
 async function fetchAndDisplayList(listName) {
     try {
       // Fetch the superhero list from the server
-      const response = await fetch(`http://127.0.0.1:3000/api/lists/${listName}`);
+      const response = await fetch(`${getBaseUrl()}/api/lists/${listName}`);
       if (!response.ok) {
         throw new Error('List not found');
       }
@@ -191,7 +207,7 @@ async function fetchAndDisplayList(listName) {
   async function fetchSuperheroImageByName(superheroName) {
     try {
       // This URL should point to your Express server's new route
-      const imageUrlResponse = await fetch(`http://localhost:3000/api/superhero-image-by-name/${encodeURIComponent(superheroName)}`);
+      const imageUrlResponse = await fetch(`${getBaseUrl()}/api/superhero-image-by-name/${encodeURIComponent(superheroName)}`);
       if (!imageUrlResponse.ok) {
         throw new Error('Failed to fetch image from proxy');
       }

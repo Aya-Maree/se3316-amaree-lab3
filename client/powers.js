@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchButton = document.getElementById('searchButton');
     const searchBox = document.querySelector('[name="superID"]');
     const publishersButton = document.getElementById('getPublishers');
-
     publishersButton.addEventListener('click', function() {
 
         fetchPublishers();
@@ -18,9 +17,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function getBaseUrl() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000';
+    } else {
+        return 'http://50.17.44.156:3000';
+    }
+}
+
 
 function fetchSuperHero(id) {
-    fetch(`http://localhost:3000/api/superhero/${id}`)
+    fetch(`${getBaseUrl()}/api/superhero/${id}`)
         .then(response => response.json())
         .then(data => {
             console.log("Response Data:", data); 
@@ -67,7 +74,7 @@ function displayResults(heroData) {
     resultsContainer.appendChild(heroCard);
 }
 function fetchPublishers() {
-    fetch('http://localhost:3000/api/publishers')
+    fetch(`${getBaseUrl()}api/publishers`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');

@@ -7,12 +7,17 @@ const superheroInfoData = require('./data/superhero_info.json'); // Adjust the p
 const toBoolean = (value) => value === "True";
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/superheroes', {
+const uri = 'mongodb+srv://heros.eg3jx8g.mongodb.net/Heros?authSource=%24external&authMechanism=MONGODB-X509';
+const options = {
+  tls: true,
+  tlsCertificateKeyFile: '/Users/ayamaree/Downloads/X509-cert-3474042284503535559.pem',
   useNewUrlParser: true,
   useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB...'))
-.catch(err => console.error('Could not connect to MongoDB...', err));
+};
+
+mongoose.connect(uri, options)
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
 
 // Clear the database
 const clearDatabase = async () => {

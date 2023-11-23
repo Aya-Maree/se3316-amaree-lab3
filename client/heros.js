@@ -19,6 +19,13 @@ function createSuperheroCard(superhero, imageUrl) {
     `;
 }
 
+function getBaseUrl() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000';
+    } else {
+        return 'http://50.17.44.156:3000';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Access the DOM elements after the DOM has been fully loaded
@@ -45,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
     searchButton.addEventListener('click', function() {
         const searchTerm = searchInput.value; // Get the current value of the search input
         const nValue = n.value; // Get the current value of the 'n' input
-        let url = new URL('http://localhost:3000/api/superheroes/search');
+        let url = new URL(`${getBaseUrl()}/api/superheroes/search`);
         
         // Use URLSearchParams to construct the query string
         let params = new URLSearchParams({
@@ -69,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Get all image URLs in parallel
                 const imageFetchPromises = data.map(superhero => {
-                    return fetch(`http://localhost:3000/api/superhero-image-by-name/${encodeURIComponent(superhero.name)}`)
+                    return fetch(`${getBaseUrl()}/api/superhero-image-by-name/${encodeURIComponent(superhero.name)}`)
                         .then(response => response.json())
                         .then(imageData => {
                             return { ...superhero, imageUrl: imageData.imageUrl }; // Combine the superhero data with its image URL
